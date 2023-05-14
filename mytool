@@ -1,0 +1,48 @@
+#! /usr/local/bin/python3
+import sys
+import os
+import subprocess
+
+def create_snapshot(snapshot_name):
+	subprocess.run(['zfs', 'snapshot', f'sa_pool/data@{snapshot_name}'])
+
+def remove_snapshot(snapshot_name):
+    if snapshot_name == "all" :
+        output = subprocess.run(['zfs','list','-t','snapshot', '-o', 'name','-r','sa_pool'],capture_output=True, text = True)
+        snapshot_lines = output.stdout.split('\n')[1:-1]
+        for line in snapshot_lines :
+            print(line)
+            subprocess.run(['zfs','destroy',f'{line}'])
+    else :
+        subprocess.run(['zfs','destroy',f'sa_pool/data@{snapshot_name}'])
+def roll_snapshot(snapshot_name):
+    subprocess.run(['zfs', 'rollback', '-r', f'sa_pool/data@{snapshot_name}'])
+def list_snapshots():
+    output = subprocess.run(['zfs','list','-t','snapshot', '-o', 'name','-r','sa_pool'],capture_output=True, text = True)
+    snapshot_lines = output.stdout.split('\n')[1:-1]
+    for line in snapshot_lines :
+    	print(line)
+def logrotate():
+    os.system("logrotate /etc/logrotate.d/fakelog")
+    os.system("cp /var/log/fakelog/* /sa_data/log/.")
+    sys.exit()
+action = sys.argv[1]
+if action == "help" :
+    print("Usage:")
+    print("create <snapshot-name> | all")
+    print("list")
+    print("roll <snapshot-name>")
+    print("logrotate")
+    sys.exit()
+if action == "logrotate" :
+    logrotate()
+if action == "list" :
+    list_snapshots()
+if action == "create" :
+    create_snapshot(sys.argv[2])
+if action == "remove" :
+    remove_snapshot(sys.argv[2])
+if action == "roll" :
+    roll_snapshot(sys.argv[2])
+
+
