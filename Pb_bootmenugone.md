@@ -114,3 +114,4 @@ fi
 ```
 
 I back up it in my github also
+![image](https://github.com/weihsinyeh/Linux/assets/90430653/59a48d8f-5ab9-4deb-bac2-ecf77763ec02)
