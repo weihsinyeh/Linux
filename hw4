@@ -1,0 +1,62 @@
+#!/bin/sh
+
+. /etc/rc.subr
+
+name="hw4"
+rcvar="hw4_enable"
+command="/usr/local/bin/poetry"
+
+pidfile="/var/run/${name}.pid"
+logfile="/var/log/${name}.log"
+
+start_cmd="hw4_start"
+stop_cmd="hw4_stop"
+restart_cmd="hw4_restart"
+
+load_rc_config $name
+
+hw4_start()
+{
+    echo "Starting ${name}."
+
+    # update NUM_DISKS
+    ori_num_disks=$(cat /root/musical-potato/.env | grep NUM_DISKS)
+    num_disks="NUM_DISKS=${NUM_DISKS}"
+    sed "s/${ori_num_disks}/${num_disks}/g" /root/musical-potato/.env > /root/musical-potato/tmp.out
+    cat /root/musical-potato/tmp.out > /root/musical-potato/.env
+
+    # update MAX_SIZE
+    ori_maxsize=$(cat /root/musical-potato/.env | grep MAX_SIZE)
+    max_size="MAX_SIZE=${MAX_SIZE}"
+    sed "s/${ori_maxsize}/${max_size}/g" /root/musical-potato/.env > /root/musical-potato/tmp.out
+    cat /root/musical-potato/tmp.out > /root/musical-potato/.env
+
+    sleep 1
+    rm /root/musical-potato/tmp.out
+
+    cd /root/musical-potato/api
+    su root -c '/usr/local/bin/poetry run uvicorn app:APP --reload --host 0.0.0.0' >${logfile} 2>&1 &
+    sleep 1
+    cat ${logfile} | grep "reloader process" | awk '{print $5}' | cut -d '[' -f2 | cut -d ']' -f1 > ${pidfile}
+
+}
+
+hw4_stop()
+{
+    echo "Stopping ${name}."
+    kill cat ${pidfile}
+    rm ${pidfile}
+    rm ${logfile}
+    rm -r /var/raid/*
+    # rm -r /tmp/filename_list
+}
+
+hw4_restart()
+{
+    hw4_stop
+    sleep 1
+    hw4_start
+}
+
+
+run_rc_command "$1"
