@@ -79,6 +79,7 @@ $ sudo grub-install /dev/sda
 ```
 
 ### Actually I just command
+在這裡喔 /boot/grub/grub.cfg
 ```
 sudo vim grub.cfg
 ```
