@@ -1,12 +1,12 @@
 ## Configuring the Boot Menu in Ubuntu
-```
-sudo update-grub
+```bash
+$ sudo update-grub
 ```
 just write grub.cfg. not write in to dist
 
 ## search in Vim
-```
-/search goal
+```bash
+$ /search goal
 ```
 [Reference](https://linuxhint.com/search-in-vim/)
 [Reference2](https://officeguide.cc/vim-search-operations-tutorial-examples/)
@@ -56,7 +56,7 @@ $ sudo -s
 
 ## Unable to edit grub.cfg
 ```
-sudo vim /boot/grub/grub.cfg
+$ sudo vim /boot/grub/grub.cfg
 ```
 [Reference](https://www.linuxquestions.org/questions/ubuntu-63/unable-to-edit-grub-cfg-file-4175615700/)
 ## 用 grub 更新開機選單
@@ -80,13 +80,15 @@ $ sudo grub-install /dev/sda
 
 ### Actually I just command
 在這裡喔 /boot/grub/grub.cfg
-```
-sudo vim grub.cfg
+```bash
+$ sudo vim grub.cfg
 ```
 vim add these
 
-```
-sudo grub-install /dev/sda
+```bash
+$ sudo grub-install /dev/sda
+Installing for x86_64-efi platform.
+Installation finished. No error reported.
 ```
 then it will show it cannot find EFI
 
